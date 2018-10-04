@@ -1,23 +1,28 @@
 package com.example.demo;
 
+import lombok.Getter;
+
 import java.util.Date;
 
 public class Block {
 
+    @Getter
     private String hash;
+    @Getter
     private String previousHash;
-    private String data;
+    @Getter
+    private String data; //Transaction
+
     private long timeStamp;
     private int nonce;
-
     private String target = "00000";
     private int targetDepth = 5;
 
+
     public Block(String data,String previousHash ) {
-        this.data = data;
+        this.data = makeHashData(data);
         this.previousHash = previousHash;
         this.timeStamp = new Date().getTime();
-        this.hash = calculateHash();
         mineNewBlock();
     }
 
@@ -28,9 +33,9 @@ public class Block {
     private void mineNewBlock(){
 
         // 조건에 맞는 Hash 값을 찾을 때까지 계속 반복한다.
-        while(!hash.substring(0, targetDepth).equals(target)) {
+        while(hash == null || !hash.substring(0, targetDepth).equals(target)) {
             nonce ++;
-            hash = calculateHash();
+            hash = makeHashBlock();
         }
     }
 
@@ -38,21 +43,23 @@ public class Block {
     /**
      * Hash 값을 조회한다.
      */
-    public String calculateHash() {
-        String calculatedhash = StringUtil.getSha256(
+    public String makeHashBlock() {
+
+        return StringUtil.getSha256(
                     previousHash +
-                        Long.toString(timeStamp) +
-                        Integer.toString(nonce) +
-                        data
+                    Long.toString(timeStamp) +
+                    data +
+                    Integer.toString(nonce)
         );
-        return calculatedhash;
     }
 
-    public String getHash(){
-        return hash;
+
+    /**
+     * 트랜잭션 데이터를 해싱처리한다.
+     */
+    public String makeHashData(String data) {
+        return StringUtil.getSha256(data);
     }
 
-    public String getPreviousHash() {
-        return previousHash;
-    }
+
 }

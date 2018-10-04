@@ -9,7 +9,7 @@ public class BlockRepository {
 
     private static ArrayList<Block> blockChain = new ArrayList<>();
 
-    public ArrayList<Block> getBlockChain() {
+    public ArrayList<Block> findAllBlockChain() {
         return blockChain;
     }
 

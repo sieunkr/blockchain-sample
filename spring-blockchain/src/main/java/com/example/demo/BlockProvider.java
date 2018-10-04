@@ -11,29 +11,32 @@ public class BlockProvider {
 
     private final BlockRepository blockRepository;
 
+    public ArrayList<Block> findAllBlockChain(){
+        return blockRepository.findAllBlockChain();
+    }
 
-    static void getBlock(){
+    public void mineBlock(String data){
+        String previousHash = findAllBlockChain().isEmpty()? "0" : findAllBlockChain().get(findAllBlockChain().size() - 1).getHash();
+        findAllBlockChain().add(new Block(data, previousHash));
     }
 
     public Boolean isChainValid() {
         Block currentBlock;
         Block previousBlock;
 
-        ArrayList<Block> blockChain = blockRepository.getBlockChain();
+        ArrayList<Block> blockChain = findAllBlockChain();
 
         for(int i=1; i < blockChain.size(); i++) {
             currentBlock = blockChain.get(i);
             previousBlock = blockChain.get(i-1);
 
             // hash값이 옳은지 확인
-            if(!currentBlock.getHash().equals(currentBlock.calculateHash()) ){
-                System.out.println("Current Hashes not equal");
+            if(!currentBlock.getHash().equals(currentBlock.makeHashBlock()) ){
                 return false;
             }
 
             // 이 전 블록과의 연결이 유효한지 확인
             if(!previousBlock.getHash().equals(currentBlock.getPreviousHash()) ) {
-                System.out.println("Previous Hashes not equal");
                 return false;
             }
         }
